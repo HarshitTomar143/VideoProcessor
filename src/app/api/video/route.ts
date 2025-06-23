@@ -3,6 +3,7 @@ import Video, { IVideo } from "../../../../models/Video";
 import { NextResponse, NextRequest } from "next/server";
 import {getServerSession} from "next-auth"
 import { authOptions } from "../../../../lib/auth";
+import mongoose from "mongoose";
 
 export async function GET(){
     try {
@@ -67,4 +68,34 @@ export async function POST(request:NextRequest){
             JSON.stringify({message:"Error while uploading video "+error.message}),{status: 500}
         )
     }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    const { id } = await request.json();
+    if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+      return NextResponse.json({ error: "Invalid video ID" }, { status: 400 });
+    }
+
+    await dbConnect();
+    const deleted = await Video.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return NextResponse.json({ error: "Video not found" }, { status: 404 });
+    }
+
+    // Optionally: Also delete from ImageKit here
+
+    return NextResponse.json({ message: "Video deleted" });
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: "Error deleting video: " + error.message },
+      { status: 500 }
+    );
+  }
 }
