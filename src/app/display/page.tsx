@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import VideoFeed from "../components/VideoFeed";
-import { IVideo } from "../../models/Video";
+import { IVideo } from "../../../models/Video";
 import { signOut } from "next-auth/react";
 
 export default function DisplayVideosPage() {
@@ -34,7 +34,7 @@ export default function DisplayVideosPage() {
   }, []);
 
   const handleDelete = (id: string) => {
-    setVideos((prev) => prev.filter((v) => v._id !== id));
+    setVideos((prev) => prev.filter((v:any) => v._id !== id));
   };
 
   return (
