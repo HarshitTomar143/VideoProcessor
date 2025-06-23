@@ -6,7 +6,6 @@ function VideoUploadForm() {
   const [videoUrl, setVideoUrl] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
@@ -14,8 +13,6 @@ function VideoUploadForm() {
 
   const handleVideoUpload = (res: any) => {
     setVideoUrl(res.url || res.filePath || "");
-    // Optionally, set thumbnail if available from ImageKit response
-
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -39,20 +36,16 @@ function VideoUploadForm() {
           title,
           description,
           videoUrl,
-        
         }),
       });
       const data = await response.json();
       if (!response.ok) {
-        throw new Error(data.error || "Failed to upload video");
+        throw new Error(data.error || data.message || "Failed to upload video");
       }
       setSuccess("Video uploaded successfully!");
       setTitle("");
       setDescription("");
       setVideoUrl("");
-
-      // Optionally, redirect or refresh
-      // router.push("/home");
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -98,7 +91,6 @@ function VideoUploadForm() {
           required
         />
       </div>
-      {/* Optionally, allow thumbnail upload or preview if available */}
       <button
         type="submit"
         className="bg-gradient-to-r from-green-400 to-teal-400 text-white py-3 rounded-full font-semibold text-lg shadow hover:from-green-500 hover:to-teal-500 transition-colors w-full"
